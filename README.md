@@ -28,6 +28,7 @@
 
 ## Nasıl Yüklenir
 - `pip install -r requirements.txt`
+- `1 Adet Lavalink Sunucusu`
 
 ## Nasıl Kullanılır
 - Botu sunucunuza davet edin
