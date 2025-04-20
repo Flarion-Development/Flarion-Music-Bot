@@ -6,7 +6,6 @@
 - YouTube ve SoundCloud'dan şarkı çalma
 - Şarkıları duraklatma, devam ettirme ve atlama
 - YouTube ve SoundCloud'da şarkı arama
-- YouTube ve SoundCloud'dan şarkı indirme
 - Çalma listesine şarkı ekleme
 - Çalma listelerini oynatma
 - Şarkıları ve çalma listelerini döngüye alma
