@@ -37,9 +37,7 @@
 MIT Lisansı
 
 
-## Docker Kullanacak Olanlar İçin Ortam Değişkenleri
-
-### Docker Ortam Değişkenleri
+## Docker Ortam Değişkenleri
 
 ```dockerfile
 # Bot yapılandırması
@@ -52,4 +50,9 @@ NODE_SECURE=false
 ```
 
 Bu değişkenleri `.env` dosyasında tanımlayabilir veya Docker çalıştırırken `-e` parametresi ile tanımlayabilirsiniz
+
+
+## Hazır Paketlenmiş Docker İmajı
+
+https://hub.docker.com/repository/docker/alperdev/flarion-music-bot
 
