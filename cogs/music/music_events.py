@@ -90,7 +90,7 @@ class MusicEvents:
                     logger.info(f"Recommendations for {track.title}: {recommendations}")
                     if recommendations:
                         # Play the first recommendation
-                        recommended_track = random.choice(recommendations)
+                        recommended_track = recommendations[2]
                         track_url = f"https://www.youtube.com/watch?v={recommended_track['url']}"
                         results = await player.fetch_tracks(track_url)
                         await player.play(results[0])
@@ -108,7 +108,7 @@ class MusicEvents:
                     logger.info(f"Recommendations for {track.title}: {recommendations}")
                     if recommendations:
                         # Play the first recommendation
-                        recommended_track = random.choice(recommendations)
+                        recommended_track = recommendations[2]
                         track_url = f"https://www.youtube.com/watch?v={recommended_track['url']}"
                         results = await player.fetch_tracks(track_url)
                         await player.play(results[0])
