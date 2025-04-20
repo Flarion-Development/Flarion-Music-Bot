@@ -1,7 +1,7 @@
 FROM python
 
 # STAGE 0 : COPY SOURCE CODE
-COPY Bot /opt/discord-music-bot
+COPY . /opt/discord-music-bot
 
 
 # STAGE 2 : CREATE REQUIREMENTS FILE AND INSTALL DEPENDENCIES
