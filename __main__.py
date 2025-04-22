@@ -15,14 +15,6 @@ def initialize_cogs():
     if music:
         cogs.append("cogs.music.music")
         cogs.append('cogs.presence.presence')
-    if moderation:
-        cogs.append("cogs.moderation")
-    if general:
-        cogs.append("cogs.general")
-    if giveaway:
-        cogs.append('cogs.giveaway')
-    if support:
-        cogs.append('cogs.support')
 
 def load_cogs():
     for cog in cogs:
@@ -40,11 +32,13 @@ async def on_ready():
 
 @bot.slash_command(name='generate-invite', description='Generate an invite link for the bot')
 async def generate_invite(interaction: nextcord.Interaction):
+    await interaction.response.defer(thinking=True)
     invite_link = nextcord.utils.oauth_url(bot.user.id, permissions=nextcord.Permissions.all())
     # create dm channel
     dm_channel = await interaction.user.create_dm()
     # send the invite link to the dm channel
     await dm_channel.send(f"Invite link: {invite_link}")
+    return await interaction.followup.send("Check your DMs for the invite link!",ephemeral=True)
 
 
 initialize_cogs()
