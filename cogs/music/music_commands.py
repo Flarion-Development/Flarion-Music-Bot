@@ -70,7 +70,7 @@ class MusicCommands:
         if not player:
             player = await interaction.user.voice.channel.connect(cls=mafic.Player)
 
-        tracks = await player.fetch_tracks(query)
+        tracks = await player.fetch_tracks(query,search_type=mafic.SearchType.YOUTUBE_MUSIC)
         if not tracks:
             return await interaction.followup.send("No tracks found.", ephemeral=True)
 

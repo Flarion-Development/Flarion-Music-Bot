@@ -22,23 +22,22 @@ class MusicEvents:
         self.loop_modes = {}
         self.command_channels = {}
         self.autoplay_enabled = {}
+        self.played_songs = set()
     
 
-    def get_youtube_music_recommendation(self, query:str):
+    def get_youtube_music_recommendation(self,video_id: str):
         # Initialize YTMusic
-        self.ytmusic = YTMusic()
+        ytmusic = YTMusic()
 
-        # Search for the query
-        search_results = self.ytmusic.get_watch_playlist(videoId=query)
+        radio = ytmusic.get_watch_playlist(videoId=video_id)
+        new_tracks = []
 
-        related_tracks = []
-        for track in search_results['tracks']:
-            related_tracks.append({
-                'title': track['title'],
-                'url': track['videoId'],
-                'artist': track['artists'][0]['name']
-            })
-        return related_tracks
+        for track in radio['tracks']:
+            track_id = track['videoId']
+            if track_id not in self.played_songs:
+                new_tracks.append(track)
+                self.played_songs.add(track_id)
+        return new_tracks
 
     @commands.Cog.listener()
     async def on_ready(self):
@@ -83,40 +82,24 @@ class MusicEvents:
                 logger.warning(f"Autoplay enabled for guild {guild_id}")
                 track = event.track
                 player = event.player
-                if track.source == "youtube":
-                    # Get recommendations from YouTube Music
-                    recommendations = self.get_youtube_music_recommendation(track.identifier)
-                    recommendations.pop(0)
-                    logger.info(f"Recommendations for {track.title}: {recommendations}")
-                    if recommendations:
-                        # Play the first recommendation
-                        recommended_track = random.choice(recommendations[:5])
-                        track_url = f"https://www.youtube.com/watch?v={recommended_track['url']}"
-                        results = await player.fetch_tracks(track_url)
-                        await player.play(results[0])
-                        return
-                elif track.source == "spotify":
-                    pass
+
+                tracks = self.get_youtube_music_recommendation(track.identifier)
+                tracks.pop(0)
+                if not tracks:
+                    return
+                res = await player.fetch_tracks(f'https://youtube.com/watch?v={tracks[0]["videoId"]}')
+                await player.play(res[0])
+                
             elif event.reason == EndReason.STOPPED:
                 logger.warning(f"Autoplay enabled for guild {guild_id}")
                 track = event.track
                 player = event.player
-                if track.source == "youtube":
-                    # Get recommendations from YouTube Music
-                    recommendations = self.get_youtube_music_recommendation(track.identifier)
-                    recommendations.pop(0)  # Remove the current track from recommendations
-                    logger.info(f"Recommendations for {track.title}: {recommendations}")
-                    if recommendations:
-                        # Play the first recommendation
-                        recommended_track = random.choice(recommendations[:5])
-                        track_url = f"https://www.youtube.com/watch?v={recommended_track['url']}"
-                        results = await player.fetch_tracks(track_url)
-                        await player.play(results[0])
-                        return
-                    else:
-                        logger.error(f"No recommendations found for {track.title}")
-                elif track.source == "spotify":
-                    pass
+                tracks = self.get_youtube_music_recommendation(track.identifier)
+                tracks.pop(0)
+                if not tracks:
+                    return
+                res = await player.fetch_tracks(f'https://youtube.com/watch?v={tracks[0]["videoId"]}')
+                await player.play(res[0])
             return
 
         # Handle finished tracks
@@ -158,10 +141,23 @@ class MusicEvents:
 
         # Handle stopped tracks
         elif event.reason == EndReason.STOPPED:
+            if self.loop_modes.get(guild_id) == "random":
+                if queue := self.guild_queues.get(guild_id):
+                    if len(queue) >= 1:
+                        random_track = random.choice(queue)
+                        queue.remove(random_track)
+                        await player.play(random_track)
+                        return
+
             if queue := self.guild_queues.get(guild_id):
                 next_track = queue.pop(0)
                 await player.play(next_track)
                 return
+
+            await player.disconnect()
+            self.guild_queues[guild_id].clear()
+            self.loop_modes[guild_id] = False
+            return
 
     @commands.Cog.listener()
     async def on_track_start(self, event: TrackStartEvent):
@@ -176,20 +172,24 @@ class MusicEvents:
         elif guild_loop_mode == "queue":
             track = event.track
             embed = nextcord.Embed(
-                title="Şuan Çalıyor",
-                description=f"**{track.title}** by **{track.author}**",
+                title="🎵 Şuan Çalıyor 🎵",
                 color=nextcord.Color.green()
             )
+            embed.add_field(name="Şarkı", value=f"**{track.title}**", inline=False)
+            embed.add_field(name="Sanatçı", value=f"**{track.author}**", inline=False)
+            embed.add_field(name="Kaynak", value=f"{track.source}", inline=False)
             embed.set_thumbnail(url=track.artwork_url)
             channel = self.bot.get_channel(self.command_channels.get(player.guild.id))
             return await channel.send(embed=embed)
         else:
             track = event.track
             embed = nextcord.Embed(
-                title="Şuan Çalıyor",
-                description=f"**{track.title}** by **{track.author}**",
+                title="🎵 Şuan Çalıyor 🎵",
                 color=nextcord.Color.green()
             )
+            embed.add_field(name="Şarkı", value=f"**{track.title}**", inline=False)
+            embed.add_field(name="Sanatçı", value=f"**{track.author}**", inline=False)
+            embed.add_field(name="Kaynak", value=f"{track.source}", inline=False)
             embed.set_thumbnail(url=track.artwork_url)
             channel = self.bot.get_channel(self.command_channels.get(player.guild.id))
             return await channel.send(embed=embed)
