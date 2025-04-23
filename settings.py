@@ -4,7 +4,7 @@ import os
 load_dotenv()
 
 
-bot_prefix = str(os.getenv('BOT_PREFIX'))
+bot_prefix = str(os.getenv('BOT_PREFIX')) or '!' 
 bot_token = str(os.getenv('BOT_TOKEN')) or 'your bot token'
 
 
@@ -22,34 +22,10 @@ else:
 
 # COGS
 
-music = os.getenv('MUSIC')
-moderation = os.getenv('MODERATION')
-general = os.getenv('GENERAL')
-giveaway = os.getenv('GIVEAWAY')
-support = os.getenv('SUPPORT')
+music = os.getenv('MUSIC') or 'true'
 
 #add conditions for cogs
 if music == 'true':
     music = True
 else:
     music = False
-
-if moderation == 'true':
-    moderation = True
-else:
-    moderation = False
-
-if general == 'true':
-    general = True
-else:
-    general = False
-
-if giveaway == 'true':
-    giveaway = True
-else:
-    giveaway = False
-
-if support == 'true':
-    support = True
-else:
-    support = False

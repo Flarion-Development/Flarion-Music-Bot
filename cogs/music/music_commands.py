@@ -44,7 +44,7 @@ class MusicCommands:
             title="Left Voice Channel",
             color=nextcord.Color.red()
         )
-        embed.add_field(name="Channel", value='Götünüzü Sikerek Sunucudan Ayrılıyorum')
+        embed.add_field(name="Channel", value='Kanaldan Ayrılıyorum')
 
         await interaction.followup.send(embed=embed, ephemeral=True)
         await player.stop()

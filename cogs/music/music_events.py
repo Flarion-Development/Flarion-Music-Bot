@@ -110,15 +110,13 @@ class MusicEvents:
             if loop_mode == "track":
                 await player.play(track)
                 return
-                
             elif loop_mode == "queue":
                 if queue := self.guild_queues.get(guild_id):
                     queue.append(track)
                     logger.debug(f"Queue for guild {guild_id}: {queue}")
                     next_track = queue.pop(0)
                     await player.play(next_track)
-                    return
-                    
+                    return         
             elif loop_mode == "random":
                 if queue := self.guild_queues.get(guild_id):
                     if len(queue) >= 1:
@@ -137,6 +135,7 @@ class MusicEvents:
             await player.disconnect()
             self.guild_queues[guild_id].clear()
             self.loop_modes[guild_id] = False
+            self.autoplay_enabled[guild_id] = False
             return
 
         # Handle stopped tracks
@@ -157,6 +156,7 @@ class MusicEvents:
             await player.disconnect()
             self.guild_queues[guild_id].clear()
             self.loop_modes[guild_id] = False
+            self.autoplay_enabled[guild_id] = False
             return
 
     @commands.Cog.listener()
