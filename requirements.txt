@@ -18,3 +18,4 @@ win32_setctime==1.2.0
 yarl==1.18.3
 setuptools
 python-dotenv
+ytmusicapi
