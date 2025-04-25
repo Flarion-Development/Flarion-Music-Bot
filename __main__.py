@@ -40,11 +40,18 @@ async def on_ready():
 
 @bot.slash_command(name='generate-invite', description='Generate an invite link for the bot')
 async def generate_invite(interaction: nextcord.Interaction):
+    embed = nextcord.Embed(
+        title="DM Kutunuzu Kontrol Edin!",
+        description="Botun davet linkini DM Kutunuza Gönderdim.",
+        color=nextcord.Color.blue()
+    )
+    await interaction.response.defer(thinking=True)
     invite_link = nextcord.utils.oauth_url(bot.user.id, permissions=nextcord.Permissions.all())
     # create dm channel
     dm_channel = await interaction.user.create_dm()
     # send the invite link to the dm channel
     await dm_channel.send(f"Invite link: {invite_link}")
+    await interaction.followup.send(embed=embed,ephemeral=True)
 
 
 initialize_cogs()
